@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from .models import Todo, User
 from .serializers import TodoSerializer
+from .serializers import TodoRemainSerializer
 
 class Todos(APIView):
 	def get_user(self, user_id):
@@ -12,6 +13,13 @@ class Todos(APIView):
 		except User.DoesNotExist:
 			raise NotFound("유저를 찾을 수 없습니다.")
 		return user
+	
+	def get_todo(self, todo_id):
+		try:
+			todo = Todo.objects.get(id=todo_id)
+		except Todo.DoesNotExist:
+			raise NotFound("일정을 찾을 수 없습니다.")
+		return todo
 	
 	def get(self, request, user_id):
 		now = timezone.localtime(timezone.now())
@@ -46,3 +54,38 @@ class Todos(APIView):
 			return Response(serializer.data)
 		else:
 			return Response(serializer.errors)
+	
+class TodosRemain(APIView):
+	def get_user(self, user_id):
+		try:
+			user = User.objects.get(id=user_id)
+		except User.DoesNotExist:
+			raise NotFound("유저를 찾을 수 없습니다.")
+		return user
+	
+	def get(self, request, user_id):
+		now = timezone.localtime(timezone.now())
+		current_month = now.month
+		current_day = now.day
+
+		month = request.query_params.get("month", current_month)
+		month = int(month)
+
+		day = request.query_params.get("day", current_day)
+		day = int(day)
+
+		user = self.get_user(user_id)
+		todos = Todo.objects.filter(
+			date__month = month,
+			date__day = day,
+			user = user
+		)
+
+		count = todos.count()
+		serializer = TodoRemainSerializer(data={'count': count})
+		if serializer.is_valid():
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors)
+
+

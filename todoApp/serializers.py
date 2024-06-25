@@ -16,3 +16,6 @@ class TodoSerializer(serializers.ModelSerializer):
 			'is_checked',
 			'emoji',
 		]
+
+class TodoRemainSerializer(serializers.Serializer):
+	count = serializers.IntegerField()
