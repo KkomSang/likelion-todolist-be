@@ -104,6 +104,7 @@ class TodoManage(APIView):
 		return todo
 	
 	def patch(self, request, user_id, todo_id):
+		user = self.get_user(user_id)
 		todo = self.get_todo(todo_id)
 		serializer = TodoSerializer(todo, data=request.data, partial=True)
 		if serializer.is_valid():
