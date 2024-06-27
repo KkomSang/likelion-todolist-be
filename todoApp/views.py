@@ -5,6 +5,7 @@ from rest_framework.exceptions import NotFound
 from .models import Todo, User
 from .serializers import TodoSerializer
 from .serializers import TodoRemainSerializer
+from rest_framework import status
 
 class Todos(APIView):
 	def get_user(self, user_id):
@@ -112,6 +113,14 @@ class TodoManage(APIView):
 			return Response(serializer.data)
 		else:
 			return Response(serializer.errors)
+		
+	def delete(self, request, user_id, todo_id):
+		user = self.get_user(user_id)
+		todo = self.get_todo(todo_id)
+		todo.delete()
+		return Response({'detail': '삭제 성공'},status=status.HTTP_204_NO_CONTENT)
+
+
 
 	
 
