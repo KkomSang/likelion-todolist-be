@@ -20,4 +20,5 @@ from . import views
 urlpatterns = [
 	path("<int:user_id>", views.Todos.as_view()),
 	path("<int:user_id>/remains", views.TodosRemain.as_view()),
+	path("<int:user_id>/<int:todo_id>", views.TodoManage.as_view()),
 ]
