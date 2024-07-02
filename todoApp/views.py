@@ -64,6 +64,13 @@ class TodosRemain(APIView):
 			raise NotFound("유저를 찾을 수 없습니다.")
 		return user
 	
+	def count_remains(self, todos):
+		count = 0
+		for i in todos:
+			if i.is_checked == False:
+				count += 1
+		return count
+	
 	def get(self, request, user_id):
 		now = timezone.localtime(timezone.now())
 		current_month = now.month
@@ -82,7 +89,7 @@ class TodosRemain(APIView):
 			user = user
 		)
 
-		count = todos.count()
+		count = self.count_remains(todos)
 		serializer = TodoRemainSerializer(data={'count': count})
 		if serializer.is_valid():
 			return Response(serializer.data)
