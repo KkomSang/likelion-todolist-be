@@ -144,3 +144,28 @@ class TodoCheck(APIView):
 			return Response(serializer.data)
 		else:
 			return Response(serializer.errors)
+
+class TodoReview(APIView):
+	def get_user(self, user_id):
+		try:
+			user = User.objects.get(id=user_id)
+		except User.DoesNotExist:
+			raise NotFound("유저를 찾을 수 없습니다.")
+		return user
+	
+	def get_todo(self, user, todo_id):
+		try:
+			todo = Todo.objects.get(user=user, id=todo_id)
+		except Todo.DoesNotExist:
+			raise NotFound("일정을 찾을 수 없습니다.")
+		return todo
+	
+	def patch(self, request, user_id, todo_id):
+		user = self.get_user(user_id)
+		todo = self.get_todo(user, todo_id)
+		serializer = TodoSerializer(todo, data=request.data, partial=True)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors)

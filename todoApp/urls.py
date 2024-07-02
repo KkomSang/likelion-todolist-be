@@ -22,4 +22,5 @@ urlpatterns = [
 	path("<int:user_id>/remains", views.TodosRemain.as_view()),
 	path("<int:user_id>/<int:todo_id>", views.TodoManage.as_view()),
 	path("<int:user_id>/<int:todo_id>/check", views.TodoCheck.as_view()),
+	path("<int:user_id>/<int:todo_id>/reviews", views.TodoReview.as_view()),
 ]
