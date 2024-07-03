@@ -33,12 +33,19 @@ class Todos(APIView):
 		day = request.query_params.get("day", current_day)
 		day = int(day)
 
+		sort = request.query_params.get("sort", None)
+
 		user = self.get_user(user_id)
 		todos = Todo.objects.filter(
 			date__month = month,
 			date__day = day,
 			user = user
 		)
+		if sort == 'asc':
+			todos = todos.order_by('content')
+		elif sort == 'desc':
+			todos = todos.order_by('-content')
+		
 		serializer = TodoSerializer(
 			todos,
 			many = True
